@@ -74,16 +74,45 @@ on:
       - "demilestoned"
 # TODO permissions: "write-all" # FIXME not that much
 jobs:
-  changelog:
+  milestones:
     name: Changelog generation
     runs-on: ubuntu-latest
     steps:
-      # - run: gh api 'repos/shvgn/deckhouse/milestones' -q '.[] | {title, state}'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: List open milestones
+        id: milestones
         run: |
-          gh api 'repos/${{ github.repository }}/milestones' \
-            -q '.[] | select(.state == "open") | .title'
+          milestones=$(gh api 'repos/${{ github.repository }}/milestones' \
+            -q '[.[] | select(.state == "open") | .title]')
+
+          count=$(echo $milestones | jq '. | length')
+
+          echo "::set-output name=list::${milestones}"
+          echo "::set-output name=count::${count}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      list: steps.milestones.outputs.list
+      count: steps.milestones.outputs.count
+  pull_requests:
+    runs-on: ubuntu-latest
+    needs: milestones
+    if: needs.milestones.outputs.count > 0
+    strategy:
+      matrix:
+        milestone: ${{ needs.milestones.outputs.list }}
+    steps:
+      - name: Find merged PRs
+        id: find_prs
+        run: |
+          milestone="${{ matrix.milestone }}"
+
+          prs=$(gh pr list -S 'milestone:${milestone}' --json number,title,body,state,mergedAt \
+            | jq '[ .[] | select(.mergedAt != null) ]')
+
+          count=$(echo $prs | jq '. | length')
+
+      #     echo "::set-env PRS=${prs}"
+      #     echo "::set-env N_PRS=${count}"
+      # - name: Parse body
+      #   id: parse_body
+      #   if: env.N_PRS > 0
