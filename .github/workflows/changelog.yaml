@@ -113,7 +113,7 @@ jobs:
         run: |
           milestone="${{ matrix.milestone }}"
 
-          prs=$(gh pr list -S 'milestone:${milestone}' --json number,title,body,state,mergedAt \
+          prs=$(gh pr list -R ${{ github.repository }} -S 'milestone:${milestone}' --json number,title,body,state,mergedAt \
             | jq '[ .[] | select(.mergedAt != null) ]')
 
 
