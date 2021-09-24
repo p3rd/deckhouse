@@ -10,7 +10,17 @@
 #   ["v1.26.0"]
 #   TODO check for semver
 #
+################################################################
 # Get milestone PRs that vere merged
+#   https://docs.github.com/en/rest/reference/pulls#check-if-a-pull-request-has-been-merged
+#
+#   gh pr list --json title,state,body -S "milestone:v1.39.0"
+#
+################################################################
+# Get milestones
+#   gh api 'repos/shvgn/deckhouse/milestones' -q '.[] | {title, state}'
+#   {"state":"open","title":"v1.39.0"}
+#   {"state":"open","title":"v1.40.0"}
 
 # Реагирует на события
 # - Мерж в main из ПР PR с майлстоном MS
