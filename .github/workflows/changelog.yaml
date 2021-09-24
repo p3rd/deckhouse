@@ -83,18 +83,18 @@ jobs:
       - name: List open milestones
         id: milestones
         run: |
-          milestones=$(gh api 'repos/${{ github.repository }}/milestones' \
-            -q '[.[] | select(.state == "open") | .title]')
+          milestones="$(gh api 'repos/${{ github.repository }}/milestones' \
+            -q '[.[] | select(.state == \"open\") | .title]')"
 
-          count=$(echo $milestones | jq '. | length')
+          count="$(echo $milestones | jq '. | length')"
 
           echo "::set-output name=list::${milestones}"
           echo "::set-output name=count::${count}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    # outputs:
-    #   list: steps.milestones.outputs.list
-    #   count: steps.milestones.outputs.count
+    outputs:
+      list: steps.milestones.outputs.list
+      count: steps.milestones.outputs.count
 
   pull_requests:
     name: Collecting pull requests
