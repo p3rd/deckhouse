@@ -51,6 +51,9 @@
 #   - must be PR
 name: Generate Release Changelog
 on:
+  push:
+    branches:
+      - "main"
   milestone:
     types:
       - "opened"
