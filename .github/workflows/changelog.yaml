@@ -75,7 +75,7 @@ on:
 # TODO permissions: "write-all" # FIXME not that much
 jobs:
   milestones:
-    name: Changelog generation
+    name: Collecting open milestones
     runs-on: ubuntu-latest
     steps:
       - name: List open milestones
@@ -94,9 +94,10 @@ jobs:
       list: steps.milestones.outputs.list
       count: steps.milestones.outputs.count
   pull_requests:
+    name: Collecting pull requests
     runs-on: ubuntu-latest
     needs: milestones
-    if: needs.milestones.outputs.count > 0
+    # if: needs.milestones.outputs.count > 0
     strategy:
       matrix:
         milestone: ${{ needs.milestones.outputs.list }}
