@@ -104,7 +104,7 @@ jobs:
     # if: needs.milestones.outputs.count > 0
     strategy:
       matrix:
-        milestone: ${{ needs.milestones.outputs.list }}
+        milestone: ${{ fromJSON( needs.milestones.outputs.list ) }}
     steps:
       - name: Find merged PRs
         id: find_prs
