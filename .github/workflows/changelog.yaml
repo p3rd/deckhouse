@@ -82,6 +82,8 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: List open milestones
-        run: gh api 'repos/${{ github.repository }}/milestones' -q '.[] | select(.state == "open") | .title'
+        run: |
+          gh api 'repos/${{ github.repository }}/milestones' \
+            -q '.[] | select(.state == "open") | .title'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
