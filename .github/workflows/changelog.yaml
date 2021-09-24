@@ -84,7 +84,7 @@ jobs:
         id: milestones
         run: |
           milestones="$(gh api 'repos/${{ github.repository }}/milestones' \
-            -q '[.[] | select(.state == \"open\") | .title]')"
+            -q '[.[] | select(.state == "open") | .title]')"
 
           count="$(echo $milestones | jq '. | length')"
 
