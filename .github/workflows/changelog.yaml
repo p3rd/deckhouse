@@ -139,5 +139,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "Got PRs : ${{ matrix.pull_requests }}"
-        echo "Got N   : $(echo ${{ matrix.pull_requests }} | jq '. | length')"
+        echo "Got PRs : ${{ toJSON( matrix.pull_requests ) }}"
+        echo "Got N   : $(echo ${{ toJSON( matrix.pull_requests ) }} | jq '. | length')"
