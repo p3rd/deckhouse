@@ -131,13 +131,10 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - pull_requests
-    strategy:
-      matrix:
-        pull_requests: ${{ fromJSON( needs.pull_requests.outputs.prs ) }}
     steps:
     - name: Get change text
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "Got PRs : ${{ toJSON( matrix.pull_requests ) }}"
-        echo "Got N   : $(echo ${{ toJSON( matrix.pull_requests ) }} | jq '. | length')"
+        echo "Got PRs : ${{ needs.pull_requests.outputs.prs }}"
+        echo "Got N   : $(echo ${{ needs.pull_requests.outputs.prs }} | jq '. | length')"
