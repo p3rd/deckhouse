@@ -128,6 +128,18 @@ jobs:
         uses: ././.github/actions/changelog
         with:
           prs: ${{ steps.find_prs.outputs.prs }}
+      - id: extract_body
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: |
+            // TODO switch to a separate file
+            // const script = require('./path/to/script.js')
+            // await script({github, context, core})
+
+            console.log("context", JSON.stringify(context, null, 2))
+            // const body = JSON.parse(process.env.INPUT_PRS).map(pr => pr.body).join("\n")
+            // console.log("resulting body", JSON.stringify(body))
     outputs:
       body: ${{ steps.extract_body.outputs.body }}
   # changelogs:

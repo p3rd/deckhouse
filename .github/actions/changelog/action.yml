@@ -8,5 +8,14 @@ outputs:
   body:
     description: Changelog body to be used in the changelog pull request
 runs:
-  using: node12
-  main: index.js
+  using: composite
+  steps:
+    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    # TODO node
+    # TODO npm install
+    - id: construction
+      run: ./index.js
+      shell: node {0}
+      env:
+        PRS: ${{ inputs.prs }}
