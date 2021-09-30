@@ -123,11 +123,11 @@ jobs:
           echo "N = ${count}"
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Extract body
-        id: extract_body
-        uses: ././.github/actions/changelog
-        with:
-          prs: ${{ steps.find_prs.outputs.prs }}
+      # - name: Extract body
+      #   id: extract_body
+      #   uses: ././.github/actions/changelog
+      #   with:
+      #     prs: ${{ steps.find_prs.outputs.prs }}
       - id: extract_body
         uses: actions/github-script@v5
         with:
