@@ -66,6 +66,7 @@ on:
     types:
       # TODO must be merged
       - "closed"
+      - "edited"
     branches:
       - "main"
   issues:
