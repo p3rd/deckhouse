@@ -121,6 +121,8 @@ jobs:
           echo "PRs: ${prs}"
           count=$(echo $prs | jq '. | length')
           echo "N = ${count}"
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Extract body
         id: extract_body
         uses: ././.github/actions/changelog
