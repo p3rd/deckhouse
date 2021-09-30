@@ -123,7 +123,7 @@ jobs:
           echo "N = ${count}"
       - name: Extract body
         id: extract_body
-        run: ././.github/actions/changelog
+        uses: ././.github/actions/changelog
         with:
           prs: ${{ steps.find_prs.outputs.prs }}
     outputs:
