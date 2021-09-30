@@ -143,7 +143,7 @@ jobs:
             const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
 
             const prs = JSON.parse(process.env.PULL_REQUESTS)
-            const body = await changelog(filename, prs)
+            const body = await changelog(prs)
 
             console.log(body)
             core.setOutput("body", body);
