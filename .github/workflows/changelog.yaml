@@ -151,8 +151,9 @@ jobs:
         id: file
         run: |
           filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone }}"
+          body="${{ steps.extract_body.outputs.body }}"
           mkdir -p ./CHANGELOG
-          cat "${{ steps.extract_body.outputs.body }}" > $filename
+          echo "${body}" > $filename
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3.10.1
         with:
