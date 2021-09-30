@@ -136,7 +136,7 @@ jobs:
         id: extract_body
         uses: actions/github-script@v5
         env:
-          PULL_REQUESTS: ${{ fromJSON( steps.find_prs.outputs.prs ) }}"
+          PULL_REQUESTS: ${{ steps.find_prs.outputs.prs }}"
         with:
           result-encoding: string
           script: |
