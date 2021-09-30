@@ -136,7 +136,7 @@ jobs:
         id: extract_body
         uses: actions/github-script@v5
         env:
-          PULL_REQUESTS: ${{ steps.find_prs.outputs.prs }}"
+          PULL_REQUESTS: ${{ fromJSON( steps.find_prs.outputs.prs ) }}"
         with:
           result-encoding: string
           script: |
@@ -145,6 +145,7 @@ jobs:
             // await script({github, context, core})
 
             // console.log("context", JSON.stringify(context, null, 2))
+            console.log("raw env", process.env.PULL_REQUESTS)
             console.log("env", JSON.stringify(JSON.parse(process.env.PULL_REQUESTS), null, 2))
             // console.log("input", core.getInput("PULL_REQUESTS", { required: true }))
             // const body = JSON.parse(process.env.INPUT_PRS).map(pr => pr.body).join("\n")
