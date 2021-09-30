@@ -30,9 +30,16 @@
 */
 
 // This function expects an array of pull  requests blonging to single milestone
-module.exports = async function (pullRequests) {
-  console.log("passed pull requests", JSON.stringify(pullRequests, null, 2));
-  const body = collectChangelog(pullRequests);
+module.exports = async function (pulls) {
+  console.log("passed pull requests", JSON.stringify(pulls, null, 2));
+
+  const chlog = collectChangelog(pulls);
+  const milestone = pulls.length > 0 ? pulls[0].milestone.title : "";
+
+  console.log({ chlog, milestone });
+
+  const body = [`## Changelog ${milestone}`, chlog].join("\r\n\r\n");
+
   return body;
 };
 

@@ -141,19 +141,28 @@ jobs:
           result-encoding: string
           script: |
             const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
-            const body = await changelog(JSON.parse(process.env.PULL_REQUESTS))
+
+            const prs = JSON.parse(process.env.PULL_REQUESTS)
+            const body = await changelog(filename, prs)
+
+            console.log(body)
             core.setOutput("body", body);
-    outputs:
-      body: ${{ steps.extract_body.outputs.body }}
-  # changelogs:
-  #   name: Changelog
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - pull_requests
-  #   steps:
-  #   - name: Get change text
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     run: |
-  #       echo "Got PRs : ${{ needs.pull_requests.outputs.prs }}"
-  #       echo "Got N   : $(echo ${{ needs.pull_requests.outputs.prs }} | jq '. | length')"
+      - name: Collect changelogs of the minor release in one file
+        id: file
+        run: |
+          filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone }}"
+          cat "${{ steps.extract_body.outputs.body }}" > $filename
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3.10.1
+        with:
+          commit-message: Re-generate changelog
+          title: Changelog ${{ matrix.milestone }}
+          body: ${{ steps.extract_body.outputs.body }}
+          labels: changelog, auto
+          base: main
+          branch: changelog/${{ matrix.milestone }}
+          token: ${{ secrets.GITHUB_TOKEN }} # questionable
+          assignees: konstantin-axenov
+          reviewers: nabokihms
+          milestone: ${{ matrix.milestone }}
+          delete-branch: true
