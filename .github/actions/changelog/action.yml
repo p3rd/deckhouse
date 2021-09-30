@@ -1,0 +1,12 @@
+name: changelog
+description: Generate changelog from merged PRs in a milestone
+inputs:
+  prs:
+    description: Pull Request data containg their body and milestone
+    required: true
+outputs:
+  body:
+    description: Changelog body to be used in the changelog pull request
+runs:
+  using: node12
+  main: index.js

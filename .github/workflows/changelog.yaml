@@ -117,24 +117,17 @@ jobs:
             --state merged \
             --json number,title,body,state,milestone)"
 
-
-
           echo "::set-output name=prs::${prs}"
           echo "PRs: ${prs}"
           count=$(echo $prs | jq '. | length')
           echo "N = ${count}"
       - name: Extract body
         id: extract_body
-        shell: node {0}
-        run: |
-          const core = require('@actions/core');
-          console.log(JSON.stringify( process.args ))
-          const prs = JSON.parse("${{ steps.find_prs.prs }}")
-          core.setOutput("body", JSON.stringify(prs.map(pr => pr.body)));
-
+        run: ././.github/actions/changelog
+        with:
+          prs: ${{ steps.find_prs.outputs.prs }}
     outputs:
       body: ${{ steps.extract_body.outputs.body }}
-
   # changelogs:
   #   name: Changelog
   #   runs-on: ubuntu-latest
