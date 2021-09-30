@@ -121,15 +121,22 @@ jobs:
           echo "PRs: ${prs}"
           count=$(echo $prs | jq '. | length')
           echo "N = ${count}"
+
       - name: Checkout
         uses: actions/checkout@v2
+
       # - name: Extract body
       #   id: extract_body
       #   uses: ././.github/actions/changelog
       #   with:
       #     prs: ${{ steps.find_prs.outputs.prs }}
-      - id: extract_body
+
+      # https://github.com/actions/github-script
+      - name: Extract changelog body
+        id: extract_body
         uses: actions/github-script@v5
+        env:
+          PULL_REQUESTS: ${{ steps.find_prs.outputs.prs }}"
         with:
           result-encoding: string
           script: |
@@ -137,7 +144,8 @@ jobs:
             // const script = require('./path/to/script.js')
             // await script({github, context, core})
 
-            console.log("context", JSON.stringify(context, null, 2))
+            // console.log("context", JSON.stringify(context, null, 2))
+            console.log("input", core.getInput("PULL_REQUESTS", { required: true }))
             // const body = JSON.parse(process.env.INPUT_PRS).map(pr => pr.body).join("\n")
             // console.log("resulting body", JSON.stringify(body))
     outputs:
