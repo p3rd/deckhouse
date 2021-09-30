@@ -128,7 +128,8 @@ jobs:
         shell: node {0}
         run: |
           const core = require('@actions/core');
-          const prs = ("JSON.parse("${{ steps.find_prs.prs }}")
+          console.log(JSON.stringify( process.args ))
+          const prs = JSON.parse("${{ steps.find_prs.prs }}")
           core.setOutput("body", JSON.stringify(prs.map(pr => pr.body)));
 
     outputs:
