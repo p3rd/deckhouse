@@ -123,18 +123,26 @@ jobs:
           echo "PRs: ${prs}"
           count=$(echo $prs | jq '. | length')
           echo "N = ${count}"
-    outputs:
-      prs: ${{ steps.find_prs.outputs.prs }}
+      - name: Extract body
+        id: extract_body
+        shell: node {0}
+        run: |
+          const core = require('@actions/core');
+          const prs = ("JSON.parse("${{ steps.find_prs.prs }}")
+          core.setOutput("body", JSON.stringify(prs.map(pr => pr.body)));
 
-  changelogs:
-    name: Changelog
-    runs-on: ubuntu-latest
-    needs:
-      - pull_requests
-    steps:
-    - name: Get change text
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        echo "Got PRs : ${{ needs.pull_requests.outputs.prs }}"
-        echo "Got N   : $(echo ${{ needs.pull_requests.outputs.prs }} | jq '. | length')"
+    outputs:
+      body: ${{ steps.extract_body.outputs.body }}
+
+  # changelogs:
+  #   name: Changelog
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - pull_requests
+  #   steps:
+  #   - name: Get change text
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     run: |
+  #       echo "Got PRs : ${{ needs.pull_requests.outputs.prs }}"
+  #       echo "Got N   : $(echo ${{ needs.pull_requests.outputs.prs }} | jq '. | length')"
