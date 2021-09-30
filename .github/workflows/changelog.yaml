@@ -140,16 +140,9 @@ jobs:
         with:
           result-encoding: string
           script: |
-            // TODO switch to a separate file
-            // const script = require('./path/to/script.js')
-            // await script({github, context, core})
-
-            // console.log("context", JSON.stringify(context, null, 2))
-            console.log("raw env", process.env.PULL_REQUESTS)
-            console.log("env", JSON.stringify(JSON.parse(process.env.PULL_REQUESTS), null, 2))
-            // console.log("input", core.getInput("PULL_REQUESTS", { required: true }))
-            // const body = JSON.parse(process.env.INPUT_PRS).map(pr => pr.body).join("\n")
-            // console.log("resulting body", JSON.stringify(body))
+            const formBody = require("./.github/scripts/changelog/format_changelog_body.js")
+            const prs = JSON.parse(process.env.PULL_REQUESTS)
+            await formBody({ core }, prs)
     outputs:
       body: ${{ steps.extract_body.outputs.body }}
   # changelogs:
