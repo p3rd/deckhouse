@@ -86,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           milestones="$(gh api 'repos/${{ github.repository }}/milestones' \
-            -q '[.[] | select(.state == "open") | .title]')"
+            -q '[.[] | select(.state == "open") ]')"
 
           count="$(echo $milestones | jq '. | length')"
 
@@ -113,7 +113,7 @@ jobs:
         run: |
           prs="$(gh pr list \
             --repo ${{ github.repository }} \
-            --search 'milestone:${{ matrix.milestone }}' \
+            --search 'milestone:${{ matrix.milestone.title }}' \
             --state merged \
             --json number,title,body,state,milestone)"
 
@@ -150,7 +150,7 @@ jobs:
       - name: Collect changelogs of the minor release in one file
         id: file
         run: |
-          filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone }}"
+          filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone.title }}"
           body="${{ steps.extract_body.outputs.body }}"
           mkdir -p ./CHANGELOG
           echo "${body}" > $filename
@@ -158,13 +158,13 @@ jobs:
         uses: peter-evans/create-pull-request@v3.10.1
         with:
           commit-message: Re-generate changelog
-          title: Changelog ${{ matrix.milestone }}
+          title: Changelog ${{ matrix.milestone.title }}
           body: ${{ steps.extract_body.outputs.body }}
           labels: changelog, auto
           base: main
-          branch: changelog/${{ matrix.milestone }}
+          branch: changelog/${{ matrix.milestone.title }}
           token: ${{ secrets.GITHUB_TOKEN }} # questionable
           # assignees: konstantin-axenov
           # reviewers: nabokihms
-          milestone: ${{ matrix.milestone }}
+          milestone: ${{ matrix.milestone.number }}
           delete-branch: true
