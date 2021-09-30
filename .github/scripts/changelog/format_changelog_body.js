@@ -1,7 +1,60 @@
-module.exports = async function ({ core }, prs) {
-  console.log("passed pull requests", JSON.stringify(prs, null, 2));
-  // console.log("input", core.getInput("PULL_REQUESTS", { required: true }))
-  // const body = JSON.parse(process.env.INPUT_PRS).map(pr => pr.body).join("\n")
-  // console.log("resulting body", JSON.stringify(body))
-  core.Output("body", "hren")
+/*
+  pullRequests exmaple:
+
+  [
+    {
+      "body": "Pull reqeust containing changelog\r\n\r\n```changelog\r\n- module: upmeter\r\n  type: fix\r\n  description: correct group   uptime calculation\r\n  fixes_issues:\r\n    - 13\r\n```\r\n\r\nFollowing is extra comments.",
+      "milestone": {
+        "number": 2,
+        "title": "v1.40.0",
+        "description": "",
+        "dueOn": null
+      },
+      "number": 1,
+      "state": "MERGED",
+      "title": "WIP action draft"
+    },
+    {
+      "body": "body\r\nbody\r\nbody\r\n\r\n```changelog\r\n- module: \"inexisting\"\r\n  type: bug\r\n  description: inexistence was not acknowledged\r\n  resolves: [ \"#6\" ]\r\n  will_restart: null\r\n```",
+      "milestone": {
+        "number": 2,
+        "title": "v1.40.0",
+        "description": "",
+        "dueOn": null
+      },
+      "number": 3,
+      "state": "MERGED",
+      "title": "add two"
+    }
+  ]
+*/
+
+// This function expects an array of pull  requests blonging to single milestone
+module.exports = async function (pullRequests) {
+  console.log("passed pull requests", JSON.stringify(pullRequests, null, 2));
+  const body = collectChangelog(pullRequests);
+  return body;
 };
+
+function collectChangelog(pullRequests) {
+  return pullRequests
+    .filter((pr) => pr.state == "MERGED")
+    .map(parseChangelog)
+    .join("\r\n");
+}
+
+// TODO tests on various malformed changelogs
+
+/*
+TODO changelog format is a matter of discussion
+
+
+*/
+function parseChangelog(pr) {
+  try {
+    const changelog = pr.body.split("```changelog")[1].split("```")[0];
+    return changelog;
+  } catch (e) {
+    return `#${pr.number} ${pr.title}`;
+  }
+}

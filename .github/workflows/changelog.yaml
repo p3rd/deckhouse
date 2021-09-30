@@ -140,9 +140,9 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const formBody = require("./.github/scripts/changelog/format_changelog_body.js")
-            const prs = JSON.parse(process.env.PULL_REQUESTS)
-            await formBody({ core }, prs)
+            const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
+            const body = await changelog(JSON.parse(process.env.PULL_REQUESTS))
+            core.setOutput("body", body);
     outputs:
       body: ${{ steps.extract_body.outputs.body }}
   # changelogs:
