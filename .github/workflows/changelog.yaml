@@ -164,7 +164,7 @@ jobs:
           base: main
           branch: changelog/${{ matrix.milestone }}
           token: ${{ secrets.GITHUB_TOKEN }} # questionable
-          assignees: konstantin-axenov
-          reviewers: nabokihms
+          # assignees: konstantin-axenov
+          # reviewers: nabokihms
           milestone: ${{ matrix.milestone }}
           delete-branch: true
