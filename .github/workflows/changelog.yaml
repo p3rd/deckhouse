@@ -1,4 +1,30 @@
-# NOTE PR is an issue, and PR milestones are acceptable via isseus API
+# Glossary
+#   - MCPR = Milestone Changelog Pull Request, the result of this workflow
+#
+# Test cases
+#   - Open milestone assigned to merged PR should add the PR to the MCPR
+#   - Open milestone deassigned to merged PR should clean the PR to the MCPR
+#   - Open milestone changed in merged PR should add the PR to new MCPR and remove it from old MCPR
+#   - When the body of a merged PR is edited, MCPR body updates
+#   - When PR changelog section is not formed or not valid, MCPR changelog contains a generic-form
+#     entry for it
+#   - When open milestone changes title, MCPR updates its title and body
+#   - Closed milestone assigned to merged PR should not do anything
+#   - Closed milestone deassigned to merged PR should not do anything
+#   - Closed milestone changed in merged PR shoul add the PR to new MCPR and remove it from old MCPR
+#   - When closed milestone changes title, nothing should change
+#   - Any human action triggers the workflow only once
+#
+# Tasks
+#   - Collect minor releases per file, not patch version per file?
+#   - Create board card for the changelog PR in 'In Progress' column?
+#   - Close milestone when MCPR merge?
+#   - Validate misletone title for semver before doing anything?
+
+
+######################################################################################################
+#
+# NOTE a PR is an issue, and PR milestones are acceptable via isseus API
 # What we want to react to:
 # - PR with currently opened release milestone
 #   - release milestone is that named as semver, e.g. "v1.39.42"
@@ -53,11 +79,12 @@
 #   - is merged
 # - issue:
 #   - must be PR
-name: Generate Release Changelog
+
+name: Release Changelog
 on:
-  push:
-    branches:
-      - "main"
+  # push:
+  #   branches:
+  #     - "main"
   milestone:
     types:
       - "opened"
@@ -69,6 +96,7 @@ on:
       - "edited"
     branches:
       - "main"
+  # A PR is an issue, and PR milestones are acceptable via the isseus API
   issues:
     types:
       - "milestoned"
@@ -81,7 +109,7 @@ jobs:
     name: Open milestones
     runs-on: ubuntu-latest
     steps:
-      - name: List open milestones
+      - name: Find Open Milestones
         id: milestones
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,8 +135,10 @@ jobs:
       matrix:
         milestone: ${{ fromJSON( needs.milestones.outputs.list ) }}
     steps:
-      - name: Find merged PRs
-        id: find_prs
+      # The gh utility has a shortcut to filter merged PRs by milestone, while it would require
+      # multiple calls in JS rest client
+      - name: Find Merged Pull Requsts
+        id: merged_milestone
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -117,44 +147,32 @@ jobs:
             --search 'milestone:${{ matrix.milestone.title }}' \
             --state merged \
             --json number,title,body,state,milestone)"
-
           echo "::set-output name=prs::${prs}"
-          echo "PRs: ${prs}"
-          count=$(echo $prs | jq '. | length')
-          echo "N = ${count}"
 
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: Extract body
-      #   id: extract_body
-      #   uses: ././.github/actions/changelog
-      #   with:
-      #     prs: ${{ steps.find_prs.outputs.prs }}
-
-      # https://github.com/actions/github-script
-      - name: Extract changelog body
+      - name: Collect Changelog
         id: extract_body
         uses: actions/github-script@v5
         env:
-          PULL_REQUESTS: ${{ steps.find_prs.outputs.prs }}
+          PULL_REQUESTS: ${{ steps.merged_milestone.outputs.prs }}
         with:
           result-encoding: string
           script: |
             const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
-
             const prs = JSON.parse(process.env.PULL_REQUESTS)
             const body = await changelog(prs)
-
-            console.log(body)
             core.setOutput("body", body);
-      - name: Collect changelogs of the minor release in one file
+
+      - name: Write Changelog File
         id: file
         run: |
           filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone.title }}"
           body="${{ steps.extract_body.outputs.body }}"
           mkdir -p ./CHANGELOG
           echo "${body}" > $filename
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3.10.1
         with:
