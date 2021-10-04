@@ -61,12 +61,12 @@ function parseChanges(pr) {
   try {
     rawChanges = pr.body.split("```changelog")[1].split("```")[0];
   } catch (e) {
-    return `#${pr.number} ${pr.title}`;
+    return [fallbackChange(pr)];
   }
 
   return rawChanges
     .split("---")
-    .filter((x) => !!x) // empty strings
+    .filter((x) => !!x) // exclude empty strings
     .map((raw) => parseSingleChange(pr, raw));
 }
 
@@ -148,6 +148,17 @@ const changeFields = new Set([
   // "resolves",
 ]);
 
+const CHANGE_TYPE_UNKNOWN = "unknown";
+
+function fallbackChange(pr) {
+  return {
+    module: "UNKNOWN",
+    type: CHANGE_TYPE_UNKNOWN,
+    description: ` ${pr.title} (#${pr.number})`,
+    pull_request: pr.url,
+  };
+}
+
 function parseIssues(baseUrl, v) {
   const nums = v
     .split(",")
@@ -173,18 +184,26 @@ function addChange(acc, change) {
   // ensure module key:   { "module": {} }
   acc[change.module] = acc[change.module] || {};
   const mc = acc[change.module];
+  const ensure = (k) => {
+    mc[k] = mc[k] || [];
+    return mc[k];
+  };
 
   // ensure module change list
   // e.g. for fixes: { "module": { "fixes": [] } }
   let list;
-  if (change.type == "fix") {
-    mc.fixes = mc.fixes || [];
-    list = mc.fixes;
-  } else if (change.type == "feature") {
-    mc.features = mc.features || [];
-    list = mc.features;
-  } else {
-    throw new Error("unknown change type");
+  switch (change.type) {
+    case "fix":
+      list = ensure("fixes");
+      break;
+    case "feature":
+      list = ensure("features");
+      break;
+    case CHANGE_TYPE_UNKNOWN:
+      list = ensure("UNKNOWN");
+      break;
+    default:
+      throw new Error(`unknown change type "${change.type}"`);
   }
 
   // add the change
@@ -195,7 +214,6 @@ function addChange(acc, change) {
     note: change.note,
   });
 }
-
 
 /*
 describe("Function", function () {
