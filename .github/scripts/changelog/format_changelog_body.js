@@ -30,6 +30,8 @@
   ]
 */
 
+const { assert } = require("chai");
+
 // This function expects an array of pull  requests blonging to single milestone
 module.exports = async function (pulls) {
   console.log("passed pull requests", JSON.stringify(pulls, null, 2));
@@ -116,8 +118,12 @@ function parseSingleChange(pr, raw) {
   const change = {};
 
   for (const line of lines) {
-    let [k, v] = line.split(":", 1);
-    v = v.trim();
+    if (!line.trim()) {
+      continue;
+    }
+
+    const [k, ...vs] = line.split(":");
+    const v = vs.join(":").trim();
 
     if (!changeFields.has(k)) {
       continue;
@@ -179,6 +185,8 @@ function addChange(acc, change) {
   } else if (change.type == "feature") {
     mc.features = mc.features || [];
     list = mc.features;
+  } else {
+    throw new Error("unknown change type");
   }
 
   // add the change
@@ -189,3 +197,91 @@ function addChange(acc, change) {
     note: change.note,
   });
 }
+
+describe("Function", function () {
+  const { expect } = require("chai");
+
+  describe("parseSingleChange", function () {
+    const cases = [
+      {
+        title: "parses minimal input",
+        prUrl: "apepe",
+        input: `
+module: mod
+type: fix
+description: something was done
+`,
+        want: {
+          module: "mod",
+          type: "fix",
+          description: "something was done",
+          pull_request: "apepe",
+        },
+      },
+
+      {
+        title: "parses input with colons in values",
+        prUrl: "apepe",
+        input: `
+module: mod:tech
+type: fix
+description: something was done: nobody knownhs what
+`,
+        want: {
+          module: "mod:tech",
+          type: "fix",
+          description: "something was done: nobody knownhs what",
+          pull_request: "apepe",
+        },
+      },
+
+      {
+        title: "parses note field",
+        prUrl: "apepe",
+        input: `
+module: modname
+type: fix
+description: something was done
+note: we xpect some outage
+`,
+        want: {
+          module: "modname",
+          type: "fix",
+          description: "something was done",
+          note: "we xpect some outage",
+          pull_request: "apepe",
+        },
+      },
+
+      {
+        title: "tolerates empty lines",
+        prUrl: "apepe",
+        input: `
+
+module: modname
+
+type: fix
+
+description: something was done
+
+note: we xpect some outage
+
+`,
+        want: {
+          module: "modname",
+          type: "fix",
+          description: "something was done",
+          note: "we xpect some outage",
+          pull_request: "apepe",
+        },
+      },
+    ];
+
+    cases.forEach((c) =>
+      it(c.title, function () {
+        const change = parseSingleChange({ url: c.prUrl }, c.input);
+        expect(change).to.deep.eq(c.want);
+      })
+    );
+  });
+});
