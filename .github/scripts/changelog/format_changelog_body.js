@@ -196,6 +196,8 @@ function addChange(acc, change) {
   });
 }
 
+
+/*
 describe("Function", function () {
   const { expect } = require("chai");
 
@@ -283,3 +285,6 @@ note: we xpect some outage
     );
   });
 });
+
+
+*/
