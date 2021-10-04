@@ -30,8 +30,6 @@
   ]
 */
 
-const { assert } = require("chai");
-
 // This function expects an array of pull  requests blonging to single milestone
 module.exports = async function (pulls) {
   console.log("passed pull requests", JSON.stringify(pulls, null, 2));
