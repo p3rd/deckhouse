@@ -11,74 +11,14 @@
 #   - When open milestone changes title, MCPR updates its title and body
 #   - Closed milestone assigned to merged PR should not do anything
 #   - Closed milestone deassigned to merged PR should not do anything
-#   - Closed milestone changed in merged PR shoul add the PR to new MCPR and remove it from old MCPR
+#   - Closed milestone changed in merged PR should add the PR to new MCPR and remove it from old MCPR
 #   - When closed milestone changes title, nothing should change
 #   - Any human action triggers the workflow only once
 #
 # Tasks
-#   - Collect minor releases per file, not patch version per file?
 #   - Create board card for the changelog PR in 'In Progress' column?
 #   - Close milestone when MCPR merge?
 #   - Validate misletone title for semver before doing anything?
-
-
-######################################################################################################
-#
-# NOTE a PR is an issue, and PR milestones are acceptable via isseus API
-# What we want to react to:
-# - PR with currently opened release milestone
-#   - release milestone is that named as semver, e.g. "v1.39.42"
-#   - the milestone MUST be opened
-#     - gh issue list --json id,number,milestone --jq ".[].milestone.title"
-
-# Get open milestones
-#   gh api 'repos/deckhouse/deckhouse/milestones?state=open' --jq "[.[] | .title]"
-#   ["v1.26.0"]
-#   TODO check for semver
-#
-
-#-----------------------------------------------------------
-# Get milestone PRs that vere merged
-#   https://docs.github.com/en/rest/reference/pulls#check-if-a-pull-request-has-been-merged
-#
-#   gh pr list --json title,state,body -S "milestone:v1.39.0"
-#
-
-#-----------------------------------------------------------
-# Get milestones
-#   gh api 'repos/shvgn/deckhouse/milestones' -q '.[] | {title, state}'
-#   {"state":"open","title":"v1.39.0"}
-#   {"state":"open","title":"v1.40.0"}
-#
-
-#-----------------------------------------------------------
-# Реагирует на события
-# - Мерж в main из ПР PR с майлстоном MS
-# - Изменение майлстона в замерженном PR
-#   - Если майлстон закрыт, то ничего не делает
-#   - Для каждого открытого майлстона MS
-# - Комментарий /changelog в ПР с ченджом
-#
-# Что делает
-#   - Создает/Обновляет ПР в main с ченджлогом для MS, присваивает ему этот MS
-#     - Генерирует ченджлог для патч-версии
-#       - Собирает все замерженные ПР с майлстоном MS
-#       - Парсит описание в специальной секции
-#     - Оформляет файл (редактирует YAML)
-#       - Создает или читает файл для минорной версии CHANGELOG/CHANGELOG-v{maj.min}.yaml
-#       - Добавляет или перезаписывает секцию с ченджлогом патч-версии (MS) в этом файле
-#     - Создает или обновляет ПР в main с новой версией файла
-#     - Приносит ПР ченджа в доску проекта
-
-# prerequisites:
-# - milestone:
-#   - is semver
-#   - is open
-# - pr:
-#   - has milestone (filtering PRs does that iherintly)
-#   - is merged
-# - issue:
-#   - must be PR
 
 name: Release Changelog
 on:
