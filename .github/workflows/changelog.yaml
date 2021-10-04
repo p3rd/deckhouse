@@ -22,9 +22,10 @@
 
 name: Release Changelog
 on:
-  # push:
-  #   branches:
-  #     - "main"
+  # TODO remove ?
+  push:
+    branches:
+      - "main"
   milestone:
     types:
       - "opened"
