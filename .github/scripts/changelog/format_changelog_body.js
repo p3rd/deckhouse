@@ -69,10 +69,16 @@ function parseChanges(pr) {
     return [fallbackChange(pr)];
   }
 
-  return rawChanges
+  const changes = rawChanges
     .split("---")
     .filter((x) => !!x) // exclude empty strings
     .map((raw) => parseSingleChange(pr, raw));
+
+  if (!changes.every((c) => c.valid())) {
+    return [fallbackChange(pr)];
+  }
+
+  return changes;
 }
 
 /**
@@ -118,7 +124,7 @@ function parseChanges(pr) {
  */
 function parseSingleChange(pr, raw) {
   const lines = raw.split("\n");
-  const change = {};
+  const data = {};
 
   for (const line of lines) {
     if (!line.trim()) {
@@ -137,12 +143,34 @@ function parseSingleChange(pr, raw) {
       //   change[k] = parseIssues(issuesBaseUrl, v);
       //   break;
       default:
-        change[k] = v;
+        data[k] = v;
     }
   }
 
-  change["pull_request"] = pr.url;
-  return change;
+  data["pull_request"] = pr.url;
+
+  return new Change(data);
+}
+
+class Change {
+  module = "";
+  note = "";
+  type = "";
+  description = "";
+  pull_request = "";
+
+  constructor({ module, note, type, description, pull_request }) {
+    this.module = this.module || module;
+    this.note = this.note || note;
+    this.type = this.type || type;
+    this.description = this.description || description;
+    this.pull_request = this.pull_request || pull_request;
+  }
+
+  // All required fields should be filled
+  valid() {
+    return this.module && this.type && this.description && this.pull_request;
+  }
 }
 
 const changeFields = new Set([
@@ -159,7 +187,7 @@ function fallbackChange(pr) {
   return {
     module: "UNKNOWN",
     type: CHANGE_TYPE_UNKNOWN,
-    description: ` ${pr.title} (#${pr.number})`,
+    description: `${pr.title} (#${pr.number})`,
     pull_request: pr.url,
   };
 }
@@ -184,7 +212,7 @@ function groupModules(acc, changes) {
     try {
       addChange(acc, c);
     } catch (e) {
-      console.log(`acc ${JSON.stringify(acc, null, 2)}`);
+      console.log(`by module = ${JSON.stringify(acc, null, 2)}`);
       console.error(`cannot add change ${JSON.stringify(c, null, 2)}`);
       throw e;
     }
