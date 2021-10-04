@@ -30,12 +30,17 @@
   ]
 */
 
-// This function expects an array of pull  requests blonging to single milestone
+// This function expects an array of pull requests belonging to single milestone
 module.exports = async function (pulls) {
+  if (pulls.length === 0) {
+    // Should not be here, but will guard anyway
+    return "";
+  }
+
   console.log("passed pull requests", JSON.stringify(pulls, null, 2));
 
   const changesByModule = collectChangelog(pulls);
-  const milestone = pulls.length > 0 ? pulls[0].milestone.title : "";
+  const milestone = pulls[0].milestone.title;
 
   console.log({ chlog: changesByModule, milestone });
 
@@ -176,7 +181,13 @@ function parseIssues(baseUrl, v) {
 
 function groupModules(acc, changes) {
   for (const c of changes) {
-    addChange(acc, c);
+    try {
+      addChange(acc, c);
+    } catch (e) {
+      console.log(`acc ${JSON.stringify(acc, null, 2)}`);
+      console.error(`cannot add change ${JSON.stringify(c, null, 2)}`);
+      throw e;
+    }
   }
 }
 
