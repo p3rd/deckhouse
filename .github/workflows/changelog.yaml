@@ -22,10 +22,6 @@
 
 name: Release Changelog
 on:
-  # TODO remove ?
-  push:
-    branches:
-      - "main"
   milestone:
     types:
       - "opened"
@@ -67,11 +63,11 @@ jobs:
       count: ${{ steps.milestones.outputs.count }}
 
   chanegelogs:
+    if: needs.milestones.outputs.count > 0
     name: Changelog ${{ matrix.milestone.title }}
     runs-on: ubuntu-latest
     needs:
       - milestones
-    if: needs.milestones.outputs.count > 0
     strategy:
       matrix:
         milestone: ${{ fromJSON( needs.milestones.outputs.list ) }}
@@ -92,19 +88,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-
-      # - name: Collect Changelog
-      #   id: extract_body
-      #   uses: actions/github-script@v5
-      #   env:
-      #     PULL_REQUESTS: ${{ steps.merged_milestone.outputs.prs }}
-      #   with:
-      #     result-encoding: string
-      #     script: |
-      #       const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
-      #       const prs = JSON.parse(process.env.PULL_REQUESTS)
-      #       const body = await changelog(prs)
-      #       core.setOutput("body", body);
 
       - name: Collect Changelog
         id: extract_body
