@@ -18,7 +18,7 @@
 # Tasks
 #   - Create board card for the changelog PR in 'In Progress' column?
 #   - Close milestone when MCPR merge?
-#   - Validate misletone title for semver before doing anything?
+#   - Validate milestone title for semver before doing anything?
 
 name: Release Changelog
 on:
@@ -28,7 +28,6 @@ on:
       - "edited"
   pull_request:
     types:
-      # TODO must be merged
       - "closed"
       - "edited"
     branches:
@@ -38,7 +37,7 @@ on:
     types:
       - "milestoned"
       - "demilestoned"
-# TODO permissions: "write-all" # FIXME not that much
+# TODO permissions
 # permissions:
 #   pull-requests: write
 jobs:
