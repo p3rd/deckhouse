@@ -108,7 +108,7 @@ jobs:
 
       - name: Collect Changelog
         id: extract_body
-        uses: shvgn/changelog@0.1.2
+        uses: shvgn/changelog@v0.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull_requests: ${{ steps.merged_milestone.outputs.prs }}
