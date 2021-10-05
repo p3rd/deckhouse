@@ -116,10 +116,11 @@ jobs:
       - name: Write Changelog File
         id: file
         run: |
-          filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone.title }}"
-          body="${{ steps.extract_body.outputs.body }}"
           mkdir -p ./CHANGELOG
-          echo "${body}" > $filename
+          filename="./CHANGELOG/CHANGELOG-${{ matrix.milestone.title }}"
+          cat > "$filename" <<EOBODYINACTION
+          ${{ steps.extract_body.outputs.body }}
+          EOBODYINACTION
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3.10.1
