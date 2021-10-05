@@ -93,18 +93,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # - name: Collect Changelog
+      #   id: extract_body
+      #   uses: actions/github-script@v5
+      #   env:
+      #     PULL_REQUESTS: ${{ steps.merged_milestone.outputs.prs }}
+      #   with:
+      #     result-encoding: string
+      #     script: |
+      #       const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
+      #       const prs = JSON.parse(process.env.PULL_REQUESTS)
+      #       const body = await changelog(prs)
+      #       core.setOutput("body", body);
+
       - name: Collect Changelog
         id: extract_body
-        uses: actions/github-script@v5
-        env:
-          PULL_REQUESTS: ${{ steps.merged_milestone.outputs.prs }}
+        uses: shvgn/changelog@0.1.2
         with:
-          result-encoding: string
-          script: |
-            const changelog = require("./.github/scripts/changelog/format_changelog_body.js")
-            const prs = JSON.parse(process.env.PULL_REQUESTS)
-            const body = await changelog(prs)
-            core.setOutput("body", body);
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull_requests: ${{ steps.merged_milestone.outputs.prs }}
 
       - name: Write Changelog File
         id: file
