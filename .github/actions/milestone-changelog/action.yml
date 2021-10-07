@@ -25,7 +25,7 @@ runs:
       run: |
         milestone="$(jq -r '.title' <<< '${{ inputs.milestone }}')"
         echo "milestone from jq   ${milestone}"
-        echo "milestone from json ${{ steps.json.milestone.title }}"
+        echo "milestone from json ${{ steps.json.outputs.milestone.title }}"
         prs="$(gh pr list \
           --repo ${{ github.repository }} \
           --search 'milestone:${milestone}' \
