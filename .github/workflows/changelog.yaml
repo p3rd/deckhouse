@@ -75,7 +75,7 @@ jobs:
         milestone: ${{ fromJSON( needs.milestones.outputs.list ) }}
     steps:
       - name: Create changelog
-        uses: ./.github/actions/milestone-changelog.yaml
+        uses: ./.github/actions/milestone-changelog
         with:
           milestone: ${{ matrix.milestone }}
 

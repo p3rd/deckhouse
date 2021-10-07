@@ -11,6 +11,7 @@ runs:
     # multiple calls in JS rest client
     - name: Find Merged Pull Requsts
       id: merged_milestone
+      shell: bash
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -33,6 +34,7 @@ runs:
 
     - name: Write Changelog File
       id: file
+      shell: bash
       run: |
         mkdir -p ./CHANGELOG
         filename="./CHANGELOG/CHANGELOG-${{ inputs.milestone.title }}.yml"
