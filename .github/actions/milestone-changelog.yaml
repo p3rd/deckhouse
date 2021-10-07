@@ -1,0 +1,54 @@
+name: Milestone Changelog
+description: Re-generates changelog for given milestone
+inputs:
+  milestone:
+    description: Milestone object containing number and title
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # The gh utility has a shortcut to filter merged PRs by milestone, while it would require
+    # multiple calls in JS rest client
+    - name: Find Merged Pull Requsts
+      id: merged_milestone
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        prs="$(gh pr list \
+          --repo ${{ github.repository }} \
+          --search 'milestone:${{ inputs.milestone.title }}' \
+          --state merged \
+          --json number,url,title,body,state,milestone)"
+        echo "::set-output name=prs::${prs}"
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Collect Changelog
+      id: changelog
+      uses: shvgn/changelog@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        pull_requests: ${{ steps.merged_milestone.outputs.prs }}
+
+    - name: Write Changelog File
+      id: file
+      run: |
+        mkdir -p ./CHANGELOG
+        filename="./CHANGELOG/CHANGELOG-${{ inputs.milestone.title }}.yml"
+        cat > "$filename" <<EOBODYINACTION
+        ${{ steps.changelog.outputs.yaml }}
+        EOBODYINACTION
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3.10.1
+      with:
+        commit-message: Re-generate changelog
+        title: Changelog ${{ inputs.milestone.title }}
+        body: ${{ steps.changelog.outputs.markdown }}
+        labels: changelog, auto
+        base: main
+        branch: changelog/${{ inputs.milestone.title }}
+        token: ${{ secrets.GITHUB_TOKEN }} # questionable
+        milestone: ${{ inputs.milestone.number }}
+        delete-branch: true
