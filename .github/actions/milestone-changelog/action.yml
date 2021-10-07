@@ -23,7 +23,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
       run: |
-        milestone=jq -r '.title' <<< '${{ inputs.milestone }}'
+        milestone="$(jq -r '.title' <<< '${{ inputs.milestone }}')"
         echo "milestone from jq   ${milestone}"
         echo "milestone from json ${{ steps.json.milestone.title }}"
         prs="$(gh pr list \
