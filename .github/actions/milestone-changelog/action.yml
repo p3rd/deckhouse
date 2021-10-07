@@ -18,6 +18,9 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
       run: |
+        echo 'Title     ${{ inputs.milestone.title }}'
+        echo 'Milestone ${{ inputs.milestone }}'
+
         prs="$(gh pr list \
           --repo ${{ github.repository }} \
           --search 'milestone:${{ inputs.milestone.title }}' \
