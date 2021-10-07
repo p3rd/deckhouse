@@ -4,6 +4,9 @@ inputs:
   milestone:
     description: Milestone object containing number and title
     required: true
+  token:
+    description: Github token
+    required: true
 runs:
   using: "composite"
   steps:
@@ -13,7 +16,7 @@ runs:
       id: merged_milestone
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.token }}
       run: |
         prs="$(gh pr list \
           --repo ${{ github.repository }} \
@@ -26,7 +29,7 @@ runs:
       id: changelog
       uses: shvgn/changelog@main
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ inputs.token }}
         pull_requests: ${{ steps.merged_milestone.outputs.prs }}
 
     - name: Write Changelog File
@@ -48,6 +51,6 @@ runs:
         labels: changelog, auto
         base: main
         branch: changelog/${{ inputs.milestone.title }}
-        token: ${{ secrets.GITHUB_TOKEN }} # questionable
+        token: ${{ inputs.token }} # questionable
         milestone: ${{ inputs.milestone.number }}
         delete-branch: true
