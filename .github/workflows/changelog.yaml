@@ -74,13 +74,13 @@ jobs:
       matrix:
         milestone: ${{ fromJSON( needs.milestones.outputs.list ) }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Create changelog
         uses: ./.github/actions/milestone-changelog
         with:
           milestone: ${{ matrix.milestone }}
-
-
-
 
       # # The gh utility has a shortcut to filter merged PRs by milestone, while it would require
       # # multiple calls in JS rest client

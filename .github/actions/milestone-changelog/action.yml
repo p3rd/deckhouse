@@ -22,9 +22,6 @@ runs:
           --json number,url,title,body,state,milestone)"
         echo "::set-output name=prs::${prs}"
 
-    - name: Checkout
-      uses: actions/checkout@v2
-
     - name: Collect Changelog
       id: changelog
       uses: shvgn/changelog@main
