@@ -10,6 +10,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Parse input
+      id: args
+      shell: bash
+      run: |
+        echo '::set-output name=milestone_title::${{ fromJSON(inputs.milestone).title }}'
+        echo '::set-output name=milestone_number::${{ fromJSON(inputs.milestone).number }}'
+
     # The gh utility has a shortcut to filter merged PRs by milestone, while it would require
     # multiple calls in JS rest client
     - name: Find Merged Pull Requsts
@@ -18,10 +25,9 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
       run: |
-        milestone="$(jq -r '.title' <<< '${{ inputs.milestone }}')"
         prs="$(gh pr list \
-          --repo ${{ github.repository }} \
-          --search "milestone:${milestone}" \
+          --repo '${{ github.repository }}' \
+          --search 'milestone:${{ steps.args.outputs.milestone_title }}' \
           --state merged \
           --json number,url,title,body,state,milestone)"
         echo "::set-output name=prs::${prs}"
@@ -38,8 +44,7 @@ runs:
       shell: bash
       run: |
         mkdir -p ./CHANGELOG
-        milestone="$(jq -r '.title' <<< '${{ inputs.milestone }}')"
-        filename="./CHANGELOG/CHANGELOG-${milestone}.yml"
+        filename='./CHANGELOG/CHANGELOG-${{ steps.args.outputs.milestone_title }}.yml'
         cat > "$filename" <<EOBODYINACTION
         ${{ steps.changelog.outputs.yaml }}
         EOBODYINACTION
@@ -48,11 +53,11 @@ runs:
       uses: peter-evans/create-pull-request@v3.10.1
       with:
         commit-message: Re-generate changelog
-        title: Changelog ${{ fromJSON(inputs.milestone).title }}
+        base: main
+        branch: changelog/${{ steps.args.outputs.milestone_title }}
+        milestone: ${{ steps.args.outputs.milestone_number }}
+        title: Changelog ${{ steps.args.outputs.milestone_title }}
         body: ${{ steps.changelog.outputs.markdown }}
         labels: changelog, auto
-        base: main
-        branch: changelog/${{ fromJSON(inputs.milestone).title }}
-        token: ${{ inputs.token }} # questionable
-        milestone: ${{ fromJSON(inputs.milestone).number }}
+        token: ${{ inputs.token }}
         delete-branch: true
