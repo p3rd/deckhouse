@@ -23,20 +23,21 @@ jobs:
               return
             }
 
-            console.log("issue", issue)
-
-            if (!issue.pull_request || !issue.milestone) {
-              console.log(
-                "condition not met",
-                JSON.stringify({
-                  pull_request: issue.pull_request,
-                  milestone: issue.milestone
-                })
-              )
+            if (!issue.pull_request)
+              core.warning('Not pull request, skip.')
               return
             }
 
-            console.log(JSON.stringify(issue.milestone))
+            if (!issue.milestone) {
+              core.warning('No milestone, skip.')
+              return
+            }
+
+            if (issue.milestone.state != 'open') {
+              core.warning(`Milestone ${issue.milestone.title} is not open.`)
+              return
+            }
+
             return issue.milestone
 
       - name: Slash Command Dispatch
@@ -47,5 +48,6 @@ jobs:
           commands: |
             changelog
           dispatch-type: workflow
+          issue-type: pull_request
           static-args: |
             milestone=${{ toJSON( steps.milestone.outputs.result ) }}
