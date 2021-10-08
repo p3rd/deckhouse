@@ -19,7 +19,6 @@ jobs:
             });
 
             if (!issue.pull_request || !issue.milestone) {
-              core.setOutput("milestone", "")
               return
             }
 
@@ -27,7 +26,7 @@ jobs:
             return issue.milestone
 
       - name: Slash Command Dispatch
-        if: steps.milestone.output.result != null
+        if: steps.milestone.outputs.result
         uses: peter-evans/slash-command-dispatch@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -35,4 +34,4 @@ jobs:
             changelog
           dispatch-type: workflow
           static-args: |
-            milestone=${{ toJSON( steps.milestone.outputs.milestone ) }}
+            milestone=${{ toJSON( steps.milestone.outputs.result ) }}
