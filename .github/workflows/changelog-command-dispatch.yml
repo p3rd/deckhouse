@@ -5,7 +5,15 @@ on:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && github.event.issue.pull_request.milestone.state == 'open' && contains(github.event.pull_request.labels.*.name, 'changelog')
     steps:
+      - name: Dump
+        run: |
+          echo "EVENT CONTEXT"
+          cat <<EOFINACTION
+          ${{ github.event }}
+          EOFINACTION
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -15,10 +23,8 @@ jobs:
         with:
           result-encoding: json
           script: |
-            const find = require('./.github/scripts/changelog-command-validate.js')
-            const milestone = await find({ github, core, context })
-            console.log("found milestone", JSON.stringify(milestone))
-            return milestone
+            const validate = require('./.github/scripts/changelog-command-validate.js')
+            return await validate({ github, core, context })
 
       - name: Slash Command Dispatch
         if: steps.milestone.outputs.result

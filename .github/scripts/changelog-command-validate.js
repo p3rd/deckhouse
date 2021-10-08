@@ -19,7 +19,7 @@ module.exports = async ({ github, core, context }) => {
     return;
   }
 
-  return issue.milestone;
+  return issue.milestone && issue.milestone.status == "open";
 };
 
 function validate(issue) {

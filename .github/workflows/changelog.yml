@@ -40,9 +40,6 @@ on:
     types:
       - "milestoned"
       - "demilestoned"
-# TODO permissions
-# permissions:
-#   pull-requests: write
 jobs:
   milestones:
     name: Open milestones

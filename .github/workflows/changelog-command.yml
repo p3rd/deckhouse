@@ -7,12 +7,6 @@ jobs:
     name: Milestone Changelog
     runs-on: ubuntu-latest
     steps:
-      - name: Echo
-        run: |
-          cat <<EOFINACTION
-          ${{ toJSON( github.event.client_payload ) }}
-          EOFINACTION
-
       - name: Checkout
         uses: actions/checkout@v2
 
