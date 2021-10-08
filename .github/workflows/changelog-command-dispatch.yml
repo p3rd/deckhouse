@@ -4,8 +4,8 @@ on:
     types: [created]
 jobs:
   dispatch:
+    name: Dispatch Changelog Event
     runs-on: ubuntu-latest
-
     steps:
       - name: Dump
         run: |
