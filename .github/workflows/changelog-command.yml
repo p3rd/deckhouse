@@ -1,21 +1,23 @@
-name: Milestone Changelog Generation
+name: Changelog Command
 on:
-  workflow_dispatch:
-    inputs:
-      milestone:
-        description: Milestone JSON with title and number
-        required: true
-
+  repository_dispatch:
+    types: [changelog-command]
 jobs:
   changelog:
     name: Milestone Changelog
     runs-on: ubuntu-latest
     steps:
+      - name: Echo
+        run: |
+          cat <<EOFINACTION
+          ${{ toJSON( github.event.client_payload ) }}
+          EOFINACTION
+
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Upgrade changelog
         uses: ./.github/actions/milestone-changelog
         with:
-          milestone: ${{ github.event.inputs.milestone }}
+          milestone: ${{ github.event.client_payload.pull_request.milestone }}
           token: ${{ secrets.GITHUB_TOKEN }}
