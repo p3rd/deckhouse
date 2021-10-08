@@ -17,5 +17,5 @@ jobs:
       - name: Upgrade changelog
         uses: ./.github/actions/milestone-changelog
         with:
-          milestone: ${{ inputs.milestone }}
+          milestone: ${{ github.event.inputs.milestone }}
           token: ${{ secrets.GITHUB_TOKEN }}
