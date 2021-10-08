@@ -81,5 +81,6 @@ jobs:
       - name: Create changelog
         uses: ./.github/actions/milestone-changelog
         with:
-          milestone: ${{ toJSON( matrix.milestone ) }}
+          milestone_title: ${{ matrix.milestone.title }}
+          milestone_number: ${{ matrix.milestone.number }}
           token: ${{ secrets.GITHUB_TOKEN }}

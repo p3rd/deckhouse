@@ -1,8 +1,11 @@
 name: Milestone Changelog
 description: Re-generates changelog for given milestone
 inputs:
-  milestone:
-    description: Milestone object containing number and title
+  milestone_title:
+    description: Milestone title
+    required: true
+  milestone_number:
+    description: Milestone number
     required: true
   token:
     description: Github token
@@ -10,19 +13,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Echo input
-      id: echo
-      shell: bash
-      run: |
-        echo 'got JSON ${{ inputs.milestone }}'
-
-    - name: Parse input
-      id: argz
-      shell: bash
-      run: |
-        echo "::set-output name=milestone_title::${{ fromJSON(inputs.milestone).title }}"
-        echo "::set-output name=milestone_number::${{ fromJSON(inputs.milestone).number }}"
-
     # The gh utility has a shortcut to filter merged PRs by milestone, while it would require
     # multiple calls in JS rest client
     - name: Find Merged Pull Requsts
@@ -33,7 +23,7 @@ runs:
       run: |
         prs="$(gh pr list \
           --repo '${{ github.repository }}' \
-          --search 'milestone:${{ steps.argz.outputs.milestone_title }}' \
+          --search 'milestone:${{ inputs.milestone_title }}' \
           --state merged \
           --json number,url,title,body,state,milestone)"
         echo "::set-output name=prs::${prs}"
@@ -50,7 +40,7 @@ runs:
       shell: bash
       run: |
         mkdir -p ./CHANGELOG
-        filename='./CHANGELOG/CHANGELOG-${{ steps.argz.outputs.milestone_title }}.yml'
+        filename='./CHANGELOG/CHANGELOG-${{ inputs.milestone_title }}.yml'
         cat > "$filename" <<EOBODYINACTION
         ${{ steps.changelog.outputs.yaml }}
         EOBODYINACTION
@@ -60,9 +50,9 @@ runs:
       with:
         commit-message: Re-generate changelog
         base: main
-        branch: changelog/${{ steps.argz.outputs.milestone_title }}
-        milestone: ${{ steps.argz.outputs.milestone_number }}
-        title: Changelog ${{ steps.argz.outputs.milestone_title }}
+        branch: changelog/${{ inputs.milestone_title }}
+        milestone: ${{ inputs.milestone_number }}
+        title: Changelog ${{ inputs.milestone_title }}
         body: ${{ steps.changelog.outputs.markdown }}
         labels: changelog, auto
         token: ${{ inputs.token }}

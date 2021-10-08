@@ -30,4 +30,5 @@ jobs:
           dispatch-type: workflow
           issue-type: pull-request
           static-args: |
-            milestone=${{ toJSON( steps.milestone.outputs.result ) }}
+            milestone_title=${{ steps.milestone.outputs.result.title }}
+            milestone_number=${{ steps.milestone.outputs.result.number }}
