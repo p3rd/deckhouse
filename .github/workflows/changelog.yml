@@ -61,7 +61,7 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            if (github.event.action === 'milestoned' || github.event.action === 'demilestoned') {
+            if (context.eventName === 'milestoned' || context.eventName === 'demilestoned') {
               const { data: pr } = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
