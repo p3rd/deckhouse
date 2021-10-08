@@ -12,33 +12,8 @@ jobs:
         with:
           result-encoding: json
           script: |
-            const { status, data: issue } = await github.rest.issues.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            if (status != 200) {
-              core.warning(`GET issue error: status ${status}`)
-              return
-            }
-
-            if (!issue.pull_request)
-              core.warning('Not pull request, skip.')
-              return
-            }
-
-            if (!issue.milestone) {
-              core.warning('No milestone, skip.')
-              return
-            }
-
-            if (issue.milestone.state != 'open') {
-              core.warning(`Milestone ${issue.milestone.title} is not open.`)
-              return
-            }
-
-            return issue.milestone
+            const find = require('./.github/scripts/find_milestone_by_pull_request.js')
+            return await find({ github, core, context })
 
       - name: Slash Command Dispatch
         if: steps.milestone.outputs.result

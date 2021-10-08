@@ -7,14 +7,14 @@ on:
         required: true
 
 jobs:
-  chanegelog:
-    name: Changelog
+  milestone_chanegelog:
+    name: Milestone Changelog
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Create changelog
+      - name: Upgrade changelog
         uses: ./.github/actions/milestone-changelog
         with:
           milestone: ${{ inputs.milestone }}
