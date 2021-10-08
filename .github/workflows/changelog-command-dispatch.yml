@@ -1,0 +1,35 @@
+name: Changelog Command Dispatch
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  changelog-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find milestone
+        id: milestone
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const issue = github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            if (!issue.pull_request || !issue.milestone) {
+              core.setOutput("milestone", "")
+              return
+            }
+
+            core.setOutput("milestone", JSON.stringify(issue.milestone))
+      - name: Slash Command Dispatch
+        if: 'steps.milestone.output.milestone != ""'
+        uses: peter-evans/slash-command-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commands: |
+            changelog
+          dispatch-type: workflow
+          static-args: |
+            milestone=${{ steps.milestone.outputs.milestone }}
