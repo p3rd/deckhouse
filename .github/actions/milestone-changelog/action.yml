@@ -21,7 +21,7 @@ runs:
         milestone="$(jq -r '.title' <<< '${{ inputs.milestone }}')"
         prs="$(gh pr list \
           --repo ${{ github.repository }} \
-          --search 'milestone:${milestone}' \
+          --search "milestone:${milestone}" \
           --state merged \
           --json number,url,title,body,state,milestone)"
         echo "::set-output name=prs::${prs}"
