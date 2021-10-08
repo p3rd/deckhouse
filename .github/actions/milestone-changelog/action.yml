@@ -11,7 +11,7 @@ runs:
   using: "composite"
   steps:
     - name: Parse input
-      id: args
+      id: argz
       shell: bash
       run: |
         echo 'got JSON ${{ inputs.milestone }}'
@@ -28,7 +28,7 @@ runs:
       run: |
         prs="$(gh pr list \
           --repo '${{ github.repository }}' \
-          --search 'milestone:${{ steps.args.outputs.milestone_title }}' \
+          --search 'milestone:${{ steps.argz.outputs.milestone_title }}' \
           --state merged \
           --json number,url,title,body,state,milestone)"
         echo "::set-output name=prs::${prs}"
@@ -45,7 +45,7 @@ runs:
       shell: bash
       run: |
         mkdir -p ./CHANGELOG
-        filename='./CHANGELOG/CHANGELOG-${{ steps.args.outputs.milestone_title }}.yml'
+        filename='./CHANGELOG/CHANGELOG-${{ steps.argz.outputs.milestone_title }}.yml'
         cat > "$filename" <<EOBODYINACTION
         ${{ steps.changelog.outputs.yaml }}
         EOBODYINACTION
@@ -55,9 +55,9 @@ runs:
       with:
         commit-message: Re-generate changelog
         base: main
-        branch: changelog/${{ steps.args.outputs.milestone_title }}
-        milestone: ${{ steps.args.outputs.milestone_number }}
-        title: Changelog ${{ steps.args.outputs.milestone_title }}
+        branch: changelog/${{ steps.argz.outputs.milestone_title }}
+        milestone: ${{ steps.argz.outputs.milestone_number }}
+        title: Changelog ${{ steps.argz.outputs.milestone_title }}
         body: ${{ steps.changelog.outputs.markdown }}
         labels: changelog, auto
         token: ${{ inputs.token }}
