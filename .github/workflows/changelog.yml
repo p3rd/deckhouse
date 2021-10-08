@@ -33,52 +33,57 @@ on:
       - "milestoned"
       - "demilestoned"
 jobs:
-  milestones:
-    name: Open milestones
+  filter:
+    name: Filter Issues
     runs-on: ubuntu-latest
-    # if
-    #   pull_request changes or merges, skipping the changelog PR itself
-    #   milestone changes (via issue api), skipping the changelog PR itself
-    # if: |
-    #   (
-    #     github.event.pull_request &&
-    #     github.event.pull_request.state == 'closed' &&
-    #     github.event.pull_request.merged &&
-    #     github.event.pull_request.milestone.state == 'open' &&
-    #     !contains(github.event.pull_request.labels.*.name, 'changelog')
-    #   ) || (
-    #     github.event.issue.pull_request &&
-    #     github.event.issue.pull_request.state == 'closed' &&
-    #     github.event.issue.pull_request.merged &&
-    #     github.event.issue.milestone.state == 'open' &&
-    #     !contains(github.event.issue.labels.*.name, 'changelog')
-    #   )
+    # Conditions
+    #   1. pull_request edited or merged
+    #   OR
+    #   2. milestone set/removed (via issue api), check the related PR in step
+    #
+    # In all cases:
+    #   skipping the changelog PR itself by label
+    if: |
+      (
+        github.event.pull_request &&
+        github.event.pull_request.state == 'closed' &&
+        github.event.pull_request.merged &&
+        github.event.pull_request.milestone.state == 'open' &&
+        !contains(github.event.issue.labels.*.name, 'changelog')
+      ) || (
+        (github.event.action == 'milestoned' || github.event.action == 'demilestoned') &&
+        github.event.issue.pull_request &&
+        !contains(github.event.issue.labels.*.name, 'changelog')
+      )
     steps:
-      - name: Dump condition
-        run: |
-          echo "PULL REQUESTS (when changes itself)"
-          echo <<EOF
-          ${{ github.event.pull_request }} -- github.event.pull_request
-          EOF
-          echo <<EOF
-          ${{ github.event.pull_request.state }} -- github.event.pull_request.state
-          EOF
-          echo <<EOF
-          ${{ github.event.pull_request.merged }} -- github.event.pull_request.merged
-          EOF
-          echo <<EOF
-          ${{ github.event.pull_request.milestone.state}} -- github.event.pull_request.milestone.state
-          EOF
+      - name: Check PR
+        id: pr
+        uses: actions/github-script@v5
+        with:
+          script: |
+            if (github.event.action === 'milestoned' || github.event.action === 'demilestoned') {
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+              });
 
+              if (pr.state !== 'closed' || !pr.merged) {
+                // Skip this PR
+                return;
+              }
+            }
 
-          echo "ISSUE (when milestone changes)"
-          echo <<EOF
-          ${{ toJSON( github.event.issue.pull_request ) }} -- github.event.issue.pull_request
-          EOF
-          echo <<EOF
-          ${{ github.event.issue.milestone.state }} -- github.event.issue.milestone.state
-          EOF
+            core.setOutput("ok", "true")
+    outputs:
+      ok: steps.pr.outputs.ok
 
+  milestones:
+    name: Open Milestones
+    runs-on: ubuntu-latest
+    needs: filter
+    if: needs.filter.outputs.ok
+    steps:
       - name: Find Open Milestones
         id: milestones
         env:
