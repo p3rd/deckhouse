@@ -15,7 +15,7 @@ jobs:
           EOFINACTION
 
       - name: Checkout
-        if: github.event.issue.pull_request && github.event.issue.pull_request.milestone.state == 'open' && contains(github.event.pull_request.labels.*.name, 'changelog')
+        if: github.event.issue.pull_request && github.event.issue.milestone.state == 'open' && contains(github.event.labels.*.name, 'changelog') && contains(github.event.labels.*.name, 'auto')
         uses: actions/checkout@v2
 
       - name: Find milestone
