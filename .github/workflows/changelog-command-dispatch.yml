@@ -6,6 +6,11 @@ jobs:
   dispatch:
     name: Dispatch Changelog Event
     runs-on: ubuntu-latest
+    if: |
+      github.event.issue.pull_request &&
+      github.event.issue.milestone.state == 'open' &&
+      contains(github.event.issue.labels.*.name, 'changelog') &&
+      contains(github.event.issue.labels.*.name, 'auto')
     steps:
       - name: Dump
         run: |
@@ -15,7 +20,6 @@ jobs:
           EOFINACTION
 
       - name: Checkout
-        if: github.event.issue.pull_request && github.event.issue.milestone.state == 'open' && contains(github.event.issue.labels.*.name, 'changelog') && contains(github.event.issue.labels.*.name, 'auto')
         uses: actions/checkout@v2
 
       - name: Find milestone
