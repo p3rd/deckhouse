@@ -20,7 +20,7 @@
 #   - Close milestone when MCPR merge?
 #   - Validate milestone title for semver before doing anything?
 
-name: Release Changelog
+name: Changelog
 on:
   push:
     branches:

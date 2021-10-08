@@ -10,12 +10,8 @@ jobs:
         id: milestone
         uses: actions/github-script@v5
         with:
+          result-encoding: json
           script: |
-            console.log({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            })
             const issue = await github.rest.issues.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -27,10 +23,11 @@ jobs:
               return
             }
 
-            core.setOutput("milestone", JSON.stringify(issue.milestone))
             console.log(JSON.stringify(issue.milestone))
+            return issue.milestone
+
       - name: Slash Command Dispatch
-        if: steps.milestone.output.milestone != ''
+        if: steps.milestone.output.result != null
         uses: peter-evans/slash-command-dispatch@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -38,4 +35,4 @@ jobs:
             changelog
           dispatch-type: workflow
           static-args: |
-            milestone=${{ steps.milestone.outputs.milestone }}
+            milestone=${{ toJSON( steps.milestone.outputs.milestone ) }}

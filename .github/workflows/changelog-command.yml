@@ -1,4 +1,4 @@
-name: Upgrade Release Changelog
+name: Changelog Command
 on:
   workflow_dispatch:
     inputs:
