@@ -48,11 +48,11 @@ runs:
       uses: peter-evans/create-pull-request@v3.10.1
       with:
         commit-message: Re-generate changelog
-        title: Changelog ${{ inputs.milestone.title }}
+        title: Changelog ${{ fromJSON(inputs.milestone).title }}
         body: ${{ steps.changelog.outputs.markdown }}
         labels: changelog, auto
         base: main
-        branch: changelog/${{ inputs.milestone.title }}
+        branch: changelog/${{ fromJSON(inputs.milestone).title }}
         token: ${{ inputs.token }} # questionable
-        milestone: ${{ inputs.milestone.number }}
+        milestone: ${{ fromJSON(inputs.milestone).number }}
         delete-branch: true
