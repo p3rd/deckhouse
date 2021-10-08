@@ -14,8 +14,9 @@ runs:
       id: args
       shell: bash
       run: |
-        echo '::set-output name=milestone_title::${{ fromJSON(inputs.milestone).title }}'
-        echo '::set-output name=milestone_number::${{ fromJSON(inputs.milestone).number }}'
+        echo "got JSON ${{ inputs.milestone }}"
+        echo "::set-output name=milestone_title::${{ fromJSON(inputs.milestone).title }}"
+        echo "::set-output name=milestone_number::${{ fromJSON(inputs.milestone).number }}"
 
     # The gh utility has a shortcut to filter merged PRs by milestone, while it would require
     # multiple calls in JS rest client
