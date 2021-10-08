@@ -1,9 +1,9 @@
-name: Dispatch Milestone Changelog Generation
+name: Changelog Command Dispatch
 on:
   issue_comment:
     types: [created]
 jobs:
-  changelog-dispatch:
+  dispatch:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +25,6 @@ jobs:
         uses: peter-evans/slash-command-dispatch@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commands: |
-            changelog
+          commands: changelog
           dispatch-type: repository
           issue-type: pull-request
