@@ -22,20 +22,12 @@
 
 name: Changelog
 on:
-  push:
-    branches:
-      - "main"
-  milestone:
-    types:
-      - "opened"
-      - "edited"
   pull_request:
     types:
       - "closed"
       - "edited"
     branches:
       - "main"
-  # A PR is an issue, and PR milestones are acceptable via the isseus API
   issues:
     types:
       - "milestoned"
@@ -44,6 +36,23 @@ jobs:
   milestones:
     name: Open milestones
     runs-on: ubuntu-latest
+    # if
+    #   pull_request changes or merges, skipping the changelog PR itself
+    #   milestone changes (via issue api), skipping the changelog PR itself
+    if: |
+      (
+        github.event.pull_request &&
+        github.event.pull_request.state == 'closed' &&
+        github.event.pull_request.merged &&
+        github.event.pull_request.milestone.state == 'open' &&
+        !contains(github.event.pull_request.labels.*.name, 'changelog')
+      ) || (
+        github.event.issue.pull_request &&
+        github.event.issue.pull_request.state == 'closed' &&
+        github.event.issue.pull_request.merged &&
+        github.event.issue.milestone.state == 'open' &&
+        !contains(github.event.issue.labels.*.name, 'changelog')
+      )
     steps:
       - name: Find Open Milestones
         id: milestones
