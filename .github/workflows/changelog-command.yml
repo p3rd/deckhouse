@@ -7,7 +7,7 @@ on:
         required: true
 
 jobs:
-  milestone_chanegelog:
+  changelog:
     name: Milestone Changelog
     runs-on: ubuntu-latest
     steps:
