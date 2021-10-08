@@ -11,7 +11,12 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            const issue = github.rest.issues.get({
+            console.log({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const issue = await github.rest.issues.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
