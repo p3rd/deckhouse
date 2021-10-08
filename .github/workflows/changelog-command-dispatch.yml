@@ -1,4 +1,4 @@
-name: Changelog Command Dispatch
+name: Dispatch Milestone Changelog Generation
 on:
   issue_comment:
     types: [created]

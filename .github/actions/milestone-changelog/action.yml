@@ -14,7 +14,7 @@ runs:
       id: args
       shell: bash
       run: |
-        echo "got JSON ${{ inputs.milestone }}"
+        echo 'got JSON ${{ inputs.milestone }}'
         echo "::set-output name=milestone_title::${{ fromJSON(inputs.milestone).title }}"
         echo "::set-output name=milestone_number::${{ fromJSON(inputs.milestone).number }}"
 
