@@ -2,12 +2,8 @@ name: Milestone Changelog Generation
 on:
   workflow_dispatch:
     inputs:
-      milestone_title:
-        description: Milestone title
-        required: true
-
-      milestone_number:
-        description: Milestone number
+      milestone:
+        description: Milestone JSON with title and number
         required: true
 
 jobs:
@@ -21,6 +17,5 @@ jobs:
       - name: Upgrade changelog
         uses: ./.github/actions/milestone-changelog
         with:
-          milestone_title: ${{ inputs.milestone_title }}
-          milestone_number: ${{ inputs.milestone_number }}
+          milestone: ${{ inputs.milestone }}
           token: ${{ secrets.GITHUB_TOKEN }}
