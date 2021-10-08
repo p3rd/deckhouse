@@ -23,8 +23,9 @@ jobs:
             }
 
             core.setOutput("milestone", JSON.stringify(issue.milestone))
+            console.log(JSON.stringify(issue.milestone))
       - name: Slash Command Dispatch
-        if: 'steps.milestone.output.milestone != ""'
+        if: steps.milestone.output.milestone != ''
         uses: peter-evans/slash-command-dispatch@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
