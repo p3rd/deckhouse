@@ -2,8 +2,8 @@ name: Upgrade Release Changelog
 on:
   workflow_dispatch:
     inputs:
-      comment-id:
-        description: 'The comment-id of the slash command'
+      milestone:
+        description: Milestone JSON with title and number
         required: true
 
 jobs:
@@ -11,15 +11,11 @@ jobs:
     name: Changelog
     runs-on: ubuntu-latest
     steps:
-      - name: Find milestone
-       run:
-        go gh api 'repos/shvgn/deckhouse/issues/9'
-
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Create changelog
         uses: ./.github/actions/milestone-changelog
         with:
-          milestone: ${{ toJSON( matrix.milestone ) }}
+          milestone: ${{ inputs.milestone }}
           token: ${{ secrets.GITHUB_TOKEN }}
