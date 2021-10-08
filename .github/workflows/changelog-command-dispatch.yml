@@ -11,7 +11,7 @@ jobs:
         run: |
           echo "EVENT CONTEXT"
           cat <<EOFINACTION
-          ${{ github.event }}
+          ${{ toJSON( github.event ) }}
           EOFINACTION
 
       - name: Checkout
