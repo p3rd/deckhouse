@@ -10,11 +10,16 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Echo input
+      id: echo
+      shell: bash
+      run: |
+        echo 'got JSON ${{ inputs.milestone }}'
+
     - name: Parse input
       id: argz
       shell: bash
       run: |
-        echo 'got JSON ${{ inputs.milestone }}'
         echo "::set-output name=milestone_title::${{ fromJSON(inputs.milestone).title }}"
         echo "::set-output name=milestone_number::${{ fromJSON(inputs.milestone).number }}"
 
