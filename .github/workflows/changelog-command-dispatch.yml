@@ -16,7 +16,9 @@ jobs:
           result-encoding: json
           script: |
             const find = require('./.github/scripts/find_milestone_by_pull_request.js')
-            return await find({ github, core, context })
+            const milestone = await find({ github, core, context })
+            console.log("found milestone", JSON.stringify(milestone))
+            return milestone
 
       - name: Slash Command Dispatch
         if: steps.milestone.outputs.result
