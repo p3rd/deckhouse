@@ -24,7 +24,7 @@ jobs:
         if: steps.milestone.outputs.result
         uses: peter-evans/slash-command-dispatch@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CHANGELOG_ACCESS_TOKEN }}
           commands: changelog
           dispatch-type: repository
           issue-type: pull-request

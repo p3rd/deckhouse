@@ -51,7 +51,7 @@ jobs:
       - name: Find Open Milestones
         id: milestones
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CHANGELOG_ACCESS_TOKEN }}
         run: |
           milestones="$(gh api 'repos/${{ github.repository }}/milestones' \
             -q '[.[] | select(.state == "open") ]')"
@@ -82,4 +82,4 @@ jobs:
         uses: ./.github/actions/milestone-changelog
         with:
           milestone: ${{ toJSON( matrix.milestone ) }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CHANGELOG_ACCESS_TOKEN }}
