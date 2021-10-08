@@ -70,7 +70,7 @@ jobs:
           ${{ github.event.pull_request.milestone.state}} -- github.event.pull_request.milestone.state
           EOF
           echo <<EOF
-          ${{ !contains(github.event.pull_request.labels.*.name, 'changelog'}} -- lacks label
+          ${{ !contains(github.event.pull_request.labels.*.name, 'changelog' }} -- lacks label
           EOF
 
           echo "ISSUE (when milestone changes)"
@@ -87,7 +87,7 @@ jobs:
           ${{ github.event.issue.milestone.state }} -- github.event.issue.milestone.state
           EOF
           echo <<EOF
-          ${{ !contains(github.event.issue.labels.*.name, 'changelog'}} -- lacks label
+          ${{ !contains(github.event.issue.labels.*.name, 'changelog' }} -- lacks label
           EOF
       - name: Find Open Milestones
         id: milestones
