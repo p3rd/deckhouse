@@ -15,7 +15,7 @@ jobs:
         with:
           result-encoding: json
           script: |
-            const find = require('./.github/scripts/find_milestone_by_pull_request.js')
+            const find = require('./.github/scripts/changelog-command-validate.js')
             const milestone = await find({ github, core, context })
             console.log("found milestone", JSON.stringify(milestone))
             return milestone
