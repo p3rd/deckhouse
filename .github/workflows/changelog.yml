@@ -57,18 +57,38 @@ jobs:
       - name: Dump condition
         run: |
           echo "PULL REQUESTS (when changes itself)"
-          echo '${{ github.event.pull_request }} -- github.event.pull_request'
-          echo '${{ github.event.pull_request.state }} -- github.event.pull_request.state'
-          echo '${{ github.event.pull_request.merged }} -- github.event.pull_request.merged'
-          echo '${{ github.event.pull_request.milestone.state}} -- github.event.pull_request.milestone.state'
-          echo "${{ !contains(github.event.pull_request.labels.*.name, 'changelog'}} -- lacks label"
+          echo <<EOF
+          ${{ github.event.pull_request }} -- github.event.pull_request
+          EOF
+          echo <<EOF
+          ${{ github.event.pull_request.state }} -- github.event.pull_request.state
+          EOF
+          echo <<EOF
+          ${{ github.event.pull_request.merged }} -- github.event.pull_request.merged
+          EOF
+          echo <<EOF
+          ${{ github.event.pull_request.milestone.state}} -- github.event.pull_request.milestone.state
+          EOF
+          echo <<EOF
+          ${{ !contains(github.event.pull_request.labels.*.name, 'changelog'}} -- lacks label
+          EOF
 
           echo "ISSUE (when milestone changes)"
-          echo '${{ github.event.issue.pull_request }} -- github.event.issue.pull_request'
-          echo '${{ github.event.issue.pull_request.state }} -- github.event.issue.pull_request'
-          echo '${{ github.event.issue.pull_request.merged }} -- github.event.issue.pull_request.merged'
-          echo '${{ github.event.issue.milestone.state }} -- github.event.issue.milestone.state'
-          echo "${{ !contains(github.event.issue.labels.*.name, 'changelog'}} -- lacks label"
+          echo <<EOF
+          ${{ github.event.issue.pull_request }} -- github.event.issue.pull_request
+          EOF
+          echo <<EOF
+          ${{ github.event.issue.pull_request.state }} -- github.event.issue.pull_request
+          EOF
+          echo <<EOF
+          ${{ github.event.issue.pull_request.merged }} -- github.event.issue.pull_request.merged
+          EOF
+          echo <<EOF
+          ${{ github.event.issue.milestone.state }} -- github.event.issue.milestone.state
+          EOF
+          echo <<EOF
+          ${{ !contains(github.event.issue.labels.*.name, 'changelog'}} -- lacks label
+          EOF
       - name: Find Open Milestones
         id: milestones
         env:
