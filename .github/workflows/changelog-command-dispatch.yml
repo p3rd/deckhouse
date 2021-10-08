@@ -5,7 +5,7 @@ on:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
-    if: github.event.issue.pull_request && github.event.issue.pull_request.milestone.state == 'open' && contains(github.event.pull_request.labels.*.name, 'changelog')
+
     steps:
       - name: Dump
         run: |
@@ -15,6 +15,7 @@ jobs:
           EOFINACTION
 
       - name: Checkout
+        if: github.event.issue.pull_request && github.event.issue.pull_request.milestone.state == 'open' && contains(github.event.pull_request.labels.*.name, 'changelog')
         uses: actions/checkout@v2
 
       - name: Find milestone
