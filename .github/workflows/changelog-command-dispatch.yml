@@ -26,6 +26,6 @@ jobs:
           commands: |
             changelog
           dispatch-type: workflow
-          issue-type: pull_request
+          issue-type: pull-request
           static-args: |
             milestone=${{ toJSON( steps.milestone.outputs.result ) }}
