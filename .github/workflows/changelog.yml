@@ -73,13 +73,7 @@ jobs:
 
           echo "ISSUE (when milestone changes)"
           echo <<EOF
-          ${{ github.event.issue.pull_request }} -- github.event.issue.pull_request
-          EOF
-          echo <<EOF
-          ${{ github.event.issue.pull_request.state }} -- github.event.issue.pull_request
-          EOF
-          echo <<EOF
-          ${{ github.event.issue.pull_request.merged }} -- github.event.issue.pull_request.merged
+          ${{ toJSON( github.event.issue.pull_request ) }} -- github.event.issue.pull_request
           EOF
           echo <<EOF
           ${{ github.event.issue.milestone.state }} -- github.event.issue.milestone.state
