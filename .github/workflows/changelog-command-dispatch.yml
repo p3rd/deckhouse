@@ -19,7 +19,7 @@ jobs:
             });
 
             if (status != 200) {
-              core.warning(`GET issue error: status ${status}``)
+              core.warning(`GET issue error: status ${status}`)
               return
             }
 
