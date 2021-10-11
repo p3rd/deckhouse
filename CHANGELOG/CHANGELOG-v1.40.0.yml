@@ -1,0 +1,18 @@
+UNKNOWN:
+  features:
+    - description: no module hehehe
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+cloud-provider-something:
+  unknown:
+    - description: error in type hehehe
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+  fixes:
+    - description: inexistence was not acknowledged
+      note: restarts nothing
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+    - description: add two
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+    - description: better to be than no to be
+      note: from separate changes block
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+
