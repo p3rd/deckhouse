@@ -1,0 +1,44 @@
+name: Pull Request
+description: Pull request with module changes
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      render: changes
+      label: Type
+      description: The change type
+      multiple: false
+      options:
+        - label: feature
+        - label: fix
+    validations:
+      required: true
+
+  - type: input
+    id: module
+    attributes:
+      render: changes
+      label: Module name
+      description: Affected module in kebab case, e.g. "node-manager"
+    validations:
+      required: true
+
+  - type: input
+    id: description
+    attributes:
+      render: changes
+      label: Description
+      description: The changelog entry. Omit to use pull request title.
+      placeholder: "Nodes with outdated manifests are no longer provisioned prior to new ones when *InstanceClass had updated."
+    validations:
+      required: false
+
+  - type: textarea
+    id: note
+    attributes:
+      render: changes
+      label: Note
+      description: Add all notable detail, e.g. expected restarts, downtime, config changes, migrations, etc.
+      placeholder: "Ingress Controller will restart"
+    validations:
+      required: false
