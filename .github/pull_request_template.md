@@ -1,4 +1,4 @@
-<!-- Describe the changes so the will be added to a release changelog. Find examples below. -->
+<!-- Describe the changes so they will be added to a release changelog. Find examples below. -->
 
 ```changes
 module: <kebab-case>
@@ -20,6 +20,8 @@ description - Optional. The changelog entry. Omit to use pull request title.
 note        - Optional. Any notable detail, e.g. expected restarts, downtime, config changes, migrations, etc.
 
 Since the syntax is YAML, `note` may contain multi-line text.
+
+There can be multiple docs in single `changes` block, and multiple `changes` blocks in the PR body.
 
 Example:
 
