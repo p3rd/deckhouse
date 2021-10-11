@@ -2,16 +2,21 @@
 #   - MCPR = Milestone Changelog Pull Request, the result of this workflow
 #
 # Test cases
+#
+# - WORK
 #   - Open milestone assigned to merged PR should add the PR to the MCPR
 #   - Open milestone deassigned to merged PR should clean the PR to the MCPR
 #   - Open milestone changed in merged PR should add the PR to new MCPR and remove it from old MCPR
+#
+# - DON'T WORK
 #   - When the body of a merged PR is edited, MCPR body updates
 #   - When PR changelog section is not formed or not valid, MCPR changelog contains a generic-form
 #     entry for it
 #   - When open milestone changes title, MCPR updates its title and body
 #   - Closed milestone assigned to merged PR should not do anything
 #   - Closed milestone deassigned to merged PR should not do anything
-#   - Closed milestone changed in merged PR should add the PR to new MCPR and remove it from old MCPR
+#   - Closed milestone changed in merged PR should add the PR to new MCPR and remove it from old
+#     MCPR
 #   - When closed milestone changes title, nothing should change
 #   - Any human action triggers the workflow only once
 #
@@ -31,7 +36,11 @@ on:
   issues:
     types:
       - "milestoned"
-      - "demilestoned"
+      # We don't track "demilestoned" event type. If we did, changing a milestone would always
+      # trigger duplicating workflows one of which would fail due to concurrent updates of the same
+      # changelog branch. We hope, that milestones just change for future releases, and are not
+      # removed at all.
+      # - "demilestoned"
 jobs:
   filter:
     name: Filter Issues
@@ -69,7 +78,7 @@ jobs:
               });
 
               if (pr.state !== 'closed' || !pr.merged) {
-                // Skip this PR
+                // Skip this PR, the change is not applied yet
                 return;
               }
             }
@@ -79,10 +88,10 @@ jobs:
       ok: steps.pr.outputs.ok
 
   milestones:
+    if: needs.filter.outputs.ok
     name: Open Milestones
     runs-on: ubuntu-latest
     needs: filter
-    if: needs.filter.outputs.ok
     steps:
       - name: Find Open Milestones
         id: milestones
@@ -105,8 +114,7 @@ jobs:
     if: needs.milestones.outputs.count > 0
     name: Changelog ${{ matrix.milestone.title }}
     runs-on: ubuntu-latest
-    needs:
-      - milestones
+    needs: milestones
     strategy:
       matrix:
         milestone: ${{ fromJSON( needs.milestones.outputs.list ) }}
