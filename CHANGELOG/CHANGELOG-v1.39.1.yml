@@ -1,0 +1,50 @@
+UNKNOWN:
+  features:
+    - description: no module hehehe
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+'555':
+  features:
+    - description: '5'
+      note: <what to expect>
+      pull_request: https://github.com/shvgn/deckhouse/pull/21
+cloud-provider-aws:
+  features:
+    - description: Node restarts can be avoided by pinning a checksum to a node group in config values.
+      note: Recommended to use as a last resort.
+      pull_request: https://github.com/shvgn/deckhouse/pull/21
+cloud-provider-something:
+  unknown:
+    - description: error in type hehehe
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+  fixes:
+    - description: inexistence was not acknowledged
+      note: restarts nothing
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+    - description: add two
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+    - description: better to be than no to be
+      note: from separate changes block
+      pull_request: https://github.com/shvgn/deckhouse/pull/3
+node-manager:
+  fixes:
+    - description: Nodes with outdated manifests are no longer provisioned on *InstanceClass update.
+      note: |-
+        Expect nodes of "Cloud" type to restart.
+
+        Node checksum calculation is fixes as well as a race condition during
+        the machines (MCM) rendering which caused outdated nodes to spawn.
+      pull_request: https://github.com/shvgn/deckhouse/pull/21
+sophisticated module:
+  features:
+    - description: very basic description
+      pull_request: https://github.com/shvgn/deckhouse/pull/2
+  fixes:
+    - description: typo in comments
+      pull_request: https://github.com/shvgn/deckhouse/pull/2
+    - description: |-
+        big improvement was here
+        so that we decided to write a 
+        multi-line string here
+      note: good times are coming!
+      pull_request: https://github.com/shvgn/deckhouse/pull/2
+
