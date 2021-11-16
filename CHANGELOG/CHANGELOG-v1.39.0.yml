@@ -1,0 +1,19 @@
+cloud-provider-aws:
+  features:
+    - description: Node restarts can be avoided by pinning a checksum to a node group in config values.
+      note: Recommended to use as a last resort.
+      pull_request: https://github.com/shvgn/deckhouse/pull/1
+general:
+  fixes:
+    - description: Github workflow syntax fix
+      pull_request: https://github.com/shvgn/deckhouse/pull/20
+node-manager:
+  fixes:
+    - description: Nodes with outdated manifests are no longer provisioned on *InstanceClass update.
+      note: |-
+        Expect nodes of "Cloud" type to restart.
+
+        Node checksum calculation is fixes as well as a race condition during
+        the machines (MCM) rendering which caused outdated nodes to spawn.
+      pull_request: https://github.com/shvgn/deckhouse/pull/1
+
